@@ -23,6 +23,20 @@ connection.connect((err) => {
   console.log('Connected to MySQL database');
 });
 
+// app.js
+app.post('/identify', (req, res) => {
+  const { email, phoneNumber } = req.body;
+
+  // Checking if either email or phoneNumber is provided
+  if (!email && !phoneNumber) {
+    return res.status(400).json({ error: 'At least one of email or phoneNumber must be provided' });
+  }
+
+  // TODO: Add contact identification and consolidation logic
+
+  res.status(200).json({ message: 'Identification successful' });
+});
+
 
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
