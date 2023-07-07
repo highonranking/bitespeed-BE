@@ -24,18 +24,23 @@ connection.connect((err) => {
 });
 
 // app.js
-app.post('/identify', (req, res) => {
-  const { email, phoneNumber } = req.body;
+const { check, validationResult } = require('express-validator');
 
-  // Checking if either email or phoneNumber is provided
-  if (!email && !phoneNumber) {
-    return res.status(400).json({ error: 'At least one of email or phoneNumber must be provided' });
+app.post(
+  '/identify',
+  [
+    check('email').optional().isEmail(),
+    check('phoneNumber').optional().isMobilePhone(),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Rest of the code
   }
-
-  // TODO: Add contact identification and consolidation logic
-
-  res.status(200).json({ message: 'Identification successful' });
-});
+);
 
 
 app.listen(3000, () => {
