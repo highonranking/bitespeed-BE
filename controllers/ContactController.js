@@ -1,13 +1,20 @@
 const mysql = require('mysql2');
 const { validationResult } = require('express-validator');
+require('dotenv').config();
 
-// MySQL connection pool setup
+
+const host = process.env.DB_HOST;
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const database = process.env.DB_NAME;
+
+// Use the variables in your database connection configuration
 const pool = mysql.createPool({
   connectionLimit: process.env.DB_CONNECTION_LIMIT || 10,
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'fluxkart_user',
-  password: process.env.DB_PASSWORD || '11111',
-  database: process.env.DB_NAME || 'fluxkart',
+  host: host,
+  user: user,
+  password: password,
+  database: database,
 });
 
 class ContactController {
