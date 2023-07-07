@@ -1,48 +1,24 @@
-// app.js
 const express = require('express');
-const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const { check, validationResult } = require('express-validator');
+const ContactController = require('./controllers/ContactController');
+
+dotenv.config();
 
 const app = express();
+app.use(express.json());
 
-app.use(bodyParser.json());
-// app.js
-const mysql = require('mysql2');
-
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'fluxkart_user',
-  password: '11111',
-  database: 'fluxkart',
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL database');
-});
-
-// app.js
-const { check, validationResult } = require('express-validator');
-
+// Endpoint for identifying and consolidating contacts
 app.post(
   '/identify',
   [
     check('email').optional().isEmail(),
     check('phoneNumber').optional().isMobilePhone(),
   ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Rest of the code
-  }
+  ContactController.identify
 );
 
-
-app.listen(3000, () => {
+// Start the server
+app.listen(process.env.PORT || 3000, () => {
   console.log('Server listening on port 3000');
 });
