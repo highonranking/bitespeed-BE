@@ -1,0 +1,19 @@
+{
+  "name": "assignment-bitespeed",
+  "version": "1.0.0",
+  "description": "Bitespeed BE assinment",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/highonranking/bitespeed-BE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/highonranking/bitespeed-BE/issues"
+  },
+  "homepage": "https://github.com/highonranking/bitespeed-BE#readme"
+}
