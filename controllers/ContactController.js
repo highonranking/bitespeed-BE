@@ -120,7 +120,66 @@ class ContactController {
 
               return res.status(200).json({ contact: consolidatedContact });
             });
-          } 
+          } else {
+            const matchingContactByPhoneNumber = results.find((contact) => contact.phoneNumber === phoneNumber);
+
+            if (matchingContactByPhoneNumber) {
+              // Contact with the provided phone number already exists, create a new secondary contact
+              const newContact = {
+                phoneNumber,
+                email,
+                linkedId: matchingContactByPhoneNumber.id,
+                linkPrecedence: 'secondary',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+
+              pool.query('INSERT INTO contacts SET ?', newContact, (insertError, insertResults) => {
+                if (insertError) {
+                  console.error('Error inserting new contact:', insertError);
+                  return res.status(500).json({ error: 'Internal server error' });
+                }
+
+                const { insertId } = insertResults;
+
+                const consolidatedContact = {
+                  primaryContactId: matchingContactByPhoneNumber.id,
+                  emails: [email, ...results.map((contact) => contact.email)],
+                  phoneNumbers: [phoneNumber, ...results.map((contact) => contact.phoneNumber).filter((p) => p !== phoneNumber)],
+                  secondaryContactIds: [...results.map((contact) => contact.id), insertId],
+                };
+
+                return res.status(200).json({ contact: consolidatedContact });
+              });
+            } else {
+              // No contact with the provided email or phone number found, create a new primary contact
+              const newContact = {
+                phoneNumber,
+                email,
+                linkedId: null,
+                linkPrecedence: 'primary',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+
+              pool.query('INSERT INTO contacts SET ?', newContact, (insertError, insertResults) => {
+                if (insertError) {
+                  console.error('Error inserting new contact:', insertError);
+                  return res.status(500).json({ error: 'Internal server error' });
+                }
+
+                const { insertId } = insertResults;
+                const consolidatedContact = {
+                  primaryContactId: insertId,
+                  emails: [email],
+                  phoneNumbers: [phoneNumber],
+                  secondaryContactIds: [],
+                };
+
+                return res.status(200).json({ contact: consolidatedContact });
+              });
+            }
+          }
         }
       }
     });
