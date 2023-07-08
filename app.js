@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const { check, validationResult } = require('express-validator');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 const ContactController = require('./controllers/ContactController');
 
 dotenv.config();
@@ -18,7 +20,11 @@ app.post(
   ContactController.identify
 );
 
+// Swagger UI setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Start the server
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Server listening on port 3000');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
